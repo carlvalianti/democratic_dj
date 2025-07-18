@@ -1,3 +1,4 @@
 streamlit
 spotipy
 streamlit-lottie
+streamlit_autorefresh
