@@ -119,7 +119,13 @@ def get_random_tracks(playlist_id, k=4):
 
 def display_votes(options):
     st.markdown(
-        "<h3 style='text-align: center;'>🎵&nbsp;Vote for the Next Song&nbsp;🎵</h3>",
+        """
+        <h3 style='text-align: center;'>
+            <span style='padding-right: 8px;'>🎵</span>
+            Vote for the Next Song
+            <span style='padding-left: 8px;'>🎵</span>
+        </h3>
+        """,
         unsafe_allow_html=True
     )
     for track in options:
