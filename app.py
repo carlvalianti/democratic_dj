@@ -203,10 +203,10 @@ if current:
     # Center album art
     st.markdown(
         f"""
-        <div style='text-align: center;'>
-            <img src="{current['album_art']}" width="125" />
-            <h5>Now Playing: {song_name} by {artist_name}</h5>
-            <p>⏱️ Time left to vote: <strong>{minutes}:{str(seconds).zfill(2)}</strong></p>
+        <div style="text-align: center; margin-top: -2rem;">
+            <img src="{current['album_art']}" width="125" style="margin-bottom: 1rem;" />
+            <h5 style="margin: 0.5rem 0;">Now Playing: {song_name} by {artist_name}</h5>
+            <p style="margin-top: 0.25rem;">⏱️ Time left to vote: <strong>{minutes}:{str(seconds).zfill(2)}</strong></p>
         </div>
         """,
         unsafe_allow_html=True
