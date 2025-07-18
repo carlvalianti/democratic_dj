@@ -24,9 +24,9 @@ st.markdown(
 # --- Spotify Auth ---
 sp = Spotify(auth_manager=SpotifyOAuth(
     scope="user-read-playback-state user-modify-playback-state playlist-read-private",
-    redirect_uri="http://127.0.0.1:8501",
-    client_id=st.secrets['SPOTIPY_CLIENT_ID'],
-    client_secret=st.secrets['SPOTIPY_CLIENT_SECRET'],
+    redirect_uri="DJ_REDIRECT_URI",
+    client_id=st.secrets['DJ_CLIENT_ID'],
+    client_secret=st.secrets['DJ_CLIENT_SECRET'],
     open_browser=True,
 ))
 
