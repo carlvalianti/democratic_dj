@@ -1,5 +1,6 @@
 import spotipy
 import streamlit as st
+from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 import random
 from streamlit_autorefresh import st_autorefresh  # pip install streamlit-autorefresh
@@ -53,20 +54,23 @@ def authenticate_host():
         cache_handler=CustomTokenHandler()
     )
 
-    token_info = auth_manager.get_cached_token()
+    token_info = auth_manager.refresh_access_token(st.secrets["DJ_REFRESH_TOKEN"])
+    return Spotify(auth=token_info["access_token"])
 
-    if not token_info:
-        code = st.query_params.get("code")
-        if not code:
-            auth_manager.get_access_token(code)
-            st.query_params.clear()  # clear URL params
-            st.rerun()
-        else:
-            auth_url = auth_manager.get_authorize_url()
-            st.markdown(f"[Host Login]({auth_url})")
-            st.stop()
-
-    return spotipy.Spotify(auth_manager=auth_manager)
+    # token_info = auth_manager.get_cached_token()
+    #
+    # if not token_info:
+    #     code = st.query_params.get("code")
+    #     if not code:
+    #         auth_manager.get_access_token(code)
+    #         st.query_params.clear()  # clear URL params
+    #         st.rerun()
+    #     else:
+    #         auth_url = auth_manager.get_authorize_url()
+    #         st.markdown(f"[Host Login]({auth_url})")
+    #         st.stop()
+    #
+    # return spotipy.Spotify(auth_manager=auth_manager)
 
 # --- Helpers ---
 def get_current_track():
