@@ -1,8 +1,9 @@
+import spotipy
 import streamlit as st
-from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 import random
 from streamlit_autorefresh import st_autorefresh  # pip install streamlit-autorefresh
+from spotipy.cache_handler import CacheHandler
 
 # global
 LOCK_TIME = 20
@@ -21,14 +22,51 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# --- Spotify Auth ---
-sp = Spotify(auth_manager=SpotifyOAuth(
-    scope="user-read-playback-state user-modify-playback-state playlist-read-private",
-    redirect_uri=st.secrets["DJ_REDIRECT_URI"],
-    client_id=st.secrets["DJ_CLIENT_ID"],
-    client_secret=st.secrets["DJ_CLIENT_SECRET"],
-    open_browser=True,
-))
+# Spotify OAuth scope for your app
+SCOPE = "user-read-playback-state user-modify-playback-state playlist-read-private"
+
+class CustomTokenHandler(CacheHandler):
+    def get_cached_token(self):
+        return {
+            "refresh_token": st.secrets["DJ_REFRESH_TOKEN"],
+            "scope": "user-read-playback-state user-modify-playback-state playlist-read-private",
+            "token_type": "Bearer",
+            "expires_in": 3600
+        }
+
+    def save_token_to_cache(self, token_info):
+        pass  # Optional: we’re not persisting anything
+
+def authenticate_host():
+    """
+    Authenticate the single host user with Spotify.
+    Uses a fixed cache file for token caching.
+    """
+    auth_manager = SpotifyOAuth(
+        client_id=st.secrets["DJ_CLIENT_ID"],
+        client_secret=st.secrets["DJ_CLIENT_SECRET"],
+        redirect_uri=st.secrets["DJ_REDIRECT_URI"],
+        scope="user-read-playback-state user-modify-playback-state playlist-read-private",
+        cache_path=".cache-host",
+        open_browser=False,
+        show_dialog=True,  # force login once, then token cached
+        cache_handler=CustomTokenHandler()
+    )
+
+    token_info = auth_manager.get_cached_token()
+
+    if not token_info:
+        code = st.query_params.get("code")
+        if not code:
+            auth_manager.get_access_token(code)
+            st.query_params.clear()  # clear URL params
+            st.rerun()
+        else:
+            auth_url = auth_manager.get_authorize_url()
+            st.markdown(f"[Host Login]({auth_url})")
+            st.stop()
+
+    return spotipy.Spotify(auth_manager=auth_manager)
 
 # --- Helpers ---
 def get_current_track():
@@ -122,6 +160,9 @@ def queue_top_voted():
 # --- Streamlit UI ---
 st.markdown("<h1 style='text-align: center;'>🎧 Democratic DJ 🎧</h1>", unsafe_allow_html=True)
 #st.title("🎧 Democratic DJ 🎧")
+
+sp = authenticate_host()
+
 
 # Init session state (only once)
 for key in ["votes", "vote_options", "last_track_id", "queued_this_song", "vote_winner"]:
