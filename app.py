@@ -193,7 +193,7 @@ if current:
     if st.session_state.vote_options:
         display_votes(st.session_state.vote_options)
 
-        if st.button("✅ md"):
+        if st.button("✅ End Vote + Queue Winner"):
             queue_top_voted()
             st.session_state.queued_this_song = True  # optional: prevent requeue if user ends early
     else:
