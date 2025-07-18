@@ -162,7 +162,8 @@ def queue_top_voted():
     return top_uri
 
 # --- Streamlit UI ---
-st.markdown("<h2 style='text-align: center;'>🎧 Democratic DJ 🎧</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; margin-bottom: 0.5rem;'>🎧 Democratic DJ 🎧</h2>",
+    unsafe_allow_html=True)
 #st.title("🎧 Democratic DJ 🎧")
 
 sp = authenticate_host()
@@ -204,7 +205,7 @@ if current:
         f"""
         <div style='text-align: center;'>
             <img src="{current['album_art']}" width="125" />
-            <h4>Now Playing: {song_name} by {artist_name}</h4>
+            <h5>Now Playing: {song_name} by {artist_name}</h5>
             <p>⏱️ Time left to vote: <strong>{minutes}:{str(seconds).zfill(2)}</strong></p>
         </div>
         """,
